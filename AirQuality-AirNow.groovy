@@ -17,6 +17,11 @@
  *
  *
  */
+ 
+/*
+ *         v1.0.1  renamed "PM2.5" attribute to not use a dot (.)
+ * csteele v1.0.0  created.
+ */ 
 
 	static String version()	{  return '1.0.0'  }
 
@@ -27,7 +32,7 @@ metadata {
 		capability "AirQuality"
 
 		attribute 'O3', 'number'
-		attribute 'PM2.5', 'number'
+		attribute 'PM2_5', 'number'
 		attribute 'PM10', 'number'
 		attribute 'airQualityColor', 'STRING'
 
@@ -69,8 +74,10 @@ void pollHandler(resp, data) {
 				if (obs.Category.Number > maxAQI) { maxAQI = obs.Category.Number }
 
 				def descriptionText = "${device.displayName} ${obs.ParameterName} is ${obs.AQI}"
+				def attrNam = obs.ParameterName.replace('.', '_')
+
 				if (debugOutput) log.info "${descriptionText}"
-				sendEvent(name: obs.ParameterName, value: obs.AQI, descriptionText: descriptionText)
+				sendEvent(name: attrNam, value: obs.AQI, descriptionText: descriptionText)
 
                 		if (isBasis == obs.ParameterName) {
 		            	descriptionText = "${device.displayName} airQualityIndex is ${obs.Category.Number}"

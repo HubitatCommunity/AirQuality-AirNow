@@ -1,1 +1,16 @@
-mt
+{
+  "packageName": "Air Quality from AirNow",
+  "author": "cSteele",
+  "version": "1.0.0",
+  "minimumHEVersion": "1.0.0",
+  "dateReleased": "2021-04-17",
+  "drivers": [
+    {
+      "id": "8f338202-fafb-4b6a-bd52-d316d93bf54f",
+      "name": "Air Quality from AirNow",
+      "namespace": "csteele",
+      "location": "https://raw.githubusercontent.com/HubitatCommunity/AirQuality-AirNow/main/AirQuality-AirNow.groovy",
+      "required": false
+    }
+  ]
+}

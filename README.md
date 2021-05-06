@@ -13,9 +13,10 @@ Save your key somewhere - you will need it in the Driver.
 
 Install this Driver and create a New Virtual Device. 
 <UL><li>Give your virtual Device a name, AirNow AQI perhaps.</li>
-<li>Drom the Type dropdown, scroll to the end and pick "Air Quality from AirNow"</li>
+<li>From the Type dropdown, scroll to the end and pick "Air Quality from AirNow"</li>
 <li>Click Save and your new device is ready to configure.</li>
 <li>Copy / Paste your AirNow API Key and choose a Poll interval and which AQI reading you would like.</li></UL>
 
 Note that AQI is an index, a number between 1 and 6. Each Index has been assigned a Color and Health rating and that is displayed too.
 
+The Standard AQ Attribute is <b>airQualityIndex</b>. Additional Attributes supported by this driver are: <b>O3, PM2.5 and PM10</b> as well as the AQ index as a color (<b>airQualityColor</b>).

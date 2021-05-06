@@ -7,7 +7,7 @@ If you don't already have one, get an <a href="https://docs.airnowapi.org/accoun
 
 Visit any of the Web Services documentation pages (e.g. Forecast by Zip Code) and look for Your API Key: in the top right of the page.
 
-It should be a string of hexadecimal characters in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. If you see your API key simply listed as GUEST, that's not it. The main AirNow Web Services index page currently has a bug that shows this as the key even when logged in. Try one of the subpages.
+It should be a string of hexadecimal characters in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX. If you see your API key simply listed as GUEST, that's not it. (<i>The main AirNow Web Services index page currently has a bug that shows this as the key even when logged in. Try one of the subpages.</i>)
 
 Save your key somewhere - you will need it in the Driver.
 

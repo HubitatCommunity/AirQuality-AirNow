@@ -23,17 +23,19 @@
  * csteele v1.0.0  created.
  */ 
 
-	static String version()	{  return '1.0.0'  }
+static String version()	{  return '1.0.0'  }
 
 import groovy.transform.Field
 
 metadata {
 	definition (name: "Air Quality from AirNow", namespace: "csteele", author: "CSteele") {
 		capability "AirQuality"
+		capability "Sensor"
 
 		attribute 'O3', 'number'
 		attribute 'PM2_5', 'number'
 		attribute 'PM10', 'number'
+		attribute 'airQualityIndex', 'number'
 		attribute 'airQualityColor', 'STRING'
 
 		command 'pollAirNow'
@@ -68,10 +70,14 @@ void pollHandler(resp, data) {
 
 		def isBasis = aqiBasis[basedOn as Integer]
 		def maxAQI  = -1
+		def maxAQICat = -1
 
 		aqi.each { obs ->
 			if ((obs.AQI >= 0) && (obs.AQI <= 2000)) { // sanity check the value - AirNow api glitch removal
-				if (obs.Category.Number > maxAQI) { maxAQI = obs.Category.Number }
+				if (obs.AQI > maxAQI) {
+					maxAQI = obs.AQI
+					maxAQICat = obs.Category.Number
+				}
 
 				def descriptionText = "${device.displayName} ${obs.ParameterName} is ${obs.AQI}"
 				def attrNam = obs.ParameterName.replace('.', '_')
@@ -79,23 +85,23 @@ void pollHandler(resp, data) {
 				if (debugOutput) log.info "${descriptionText}"
 				sendEvent(name: attrNam, value: obs.AQI, descriptionText: descriptionText)
 
-                		if (isBasis == obs.ParameterName) {
-		            	descriptionText = "${device.displayName} airQualityIndex is ${obs.Category.Number}"
-		            	if (txtEnable) log.info "${descriptionText}"
-		            	sendEvent(name: "airQualityIndex", value: obs.Category.Number, descriptionText: descriptionText)
-		            	descriptionText = "${device.displayName} airQualityColor is ${aqiColor[obs.Category.Number]}"
-		            	if (debugOutput) log.info "${descriptionText}"
-		            	sendEvent(name: "airQualityColor", value: aqiColor[obs.Category.Number], descriptionText: descriptionText)
+				if (isBasis == obs.ParameterName) {
+					descriptionText = "${device.displayName} airQualityIndex is ${obs.AQI}"
+					if (txtEnable) log.info "${descriptionText}"
+					sendEvent(name: "airQualityIndex", value: obs.AQI, descriptionText: descriptionText)
+					descriptionText = "${device.displayName} airQualityColor is ${aqiColor[obs.Category.Number]}"
+					if (debugOutput) log.info "${descriptionText}"
+					sendEvent(name: "airQualityColor", value: aqiColor[obs.Category.Number], descriptionText: descriptionText)
 				}
 			}
 		}
 		if (isBasis == "maxAQI") {
-		      descriptionText = "${device.displayName} airQualityIndex is $maxAQI"
-            	if (txtEnable) log.info "${descriptionText}"
-            	sendEvent(name: "airQualityIndex", value: maxAQI, descriptionText: descriptionText)
-            	descriptionText = "${device.displayName} airQualityColor is ${aqiColor[maxAQI]}"
-            	if (debugOutput) log.info "${descriptionText}"
-            	sendEvent(name: "airQualityColor", value: aqiColor[maxAQI], descriptionText: descriptionText)
+			descriptionText = "${device.displayName} airQualityIndex is $maxAQI"
+			if (txtEnable) log.info "${descriptionText}"
+			sendEvent(name: "airQualityIndex", value: maxAQI, descriptionText: descriptionText)
+			descriptionText = "${device.displayName} airQualityColor is ${aqiColor[maxAQICat]}"
+			if (debugOutput) log.info "${descriptionText}"
+			sendEvent(name: "airQualityColor", value: aqiColor[maxAQICat], descriptionText: descriptionText)
 
 		}
 	}

@@ -17,6 +17,6 @@ Install this Driver and create a New Virtual Device.
 <li>Click Save and your new device is ready to configure.</li>
 <li>Copy / Paste your AirNow API Key and choose a Poll interval and which AQI reading you would like.</li></UL>
 
-Note that AQI is an index, a number between 1 and 6. Each Index has been assigned a Color and Health rating and that is displayed too.
+Each of the six AQI categories has been assigned a Color and Health rating and that is displayed too.
 
-The Standard AQ Attribute is <b>airQualityIndex</b>. Additional Attributes supported by this driver are: <b>O3, PM2.5 and PM10</b> as well as the AQ index as a color (<b>airQualityColor</b>).
+The Standard AQ Attribute is <b>airQualityIndex</b>. Additional Attributes supported by this driver are: <b>O3, PM2.5 and PM10</b> as well as the AQ category as a color (<b>airQualityColor</b>).

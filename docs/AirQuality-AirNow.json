@@ -12,7 +12,7 @@
       "name": "Air Quality from AirNow",
       "namespace": "csteele",
       "location": "https://raw.githubusercontent.com/HubitatCommunity/AirQuality-AirNow/main/AirQuality-AirNow.groovy",
-      "required": false
+      "required": true
     }
   ]
 }

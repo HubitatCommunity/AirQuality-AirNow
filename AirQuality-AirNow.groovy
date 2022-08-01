@@ -19,11 +19,14 @@
  */
  
 /*
+ *         v1.0.2  PR from cmbruns
+ *			 According to Hubitat docs the airQualityIndex attribute is supposed range from 0 to 500, meaning it should be the 
+ *			 full PM10-equivalent value, not the 6-category meaning previously used and matches Ecowitt air quality sensor range.
  *         v1.0.1  renamed "PM2.5" attribute to not use a dot (.)
  * csteele v1.0.0  created.
  */ 
 
-static String version()	{  return '1.0.0'  }
+static String version()	{  return '1.0.2'  }
 
 import groovy.transform.Field
 

@@ -16,9 +16,9 @@
  *	under the License.
  *
  *
- */
- 
-/*
+ *
+ *  JAS -  v1.0.4  Cleaned up some logging items 11/10/23
+ *  JAS -  v1.0.3  split out category and color 08/08/23
  *         v1.0.2  PR from cmbruns
  *			 According to Hubitat docs the airQualityIndex attribute is supposed range from 0 to 500, meaning it should be the 
  *			 full PM10-equivalent value, not the 6-category meaning previously used and matches Ecowitt air quality sensor range.
@@ -26,7 +26,7 @@
  * csteele v1.0.0  created.
  */ 
 
-static String version()	{  return '1.0.2'  }
+static String version()	{  return '1.0.4'  }
 
 import groovy.transform.Field
 
@@ -40,6 +40,7 @@ metadata {
 		attribute 'PM10', 'number'
 		attribute 'airQualityIndex', 'number'
 		attribute 'airQualityColor', 'STRING'
+		attribute 'airQualityCategory', 'number'
 
 		command 'pollAirNow'
 	}
@@ -61,14 +62,12 @@ void pollAirNow() {
 	Map params = [ 
 	   uri: 'https://www.airnowapi.org/aq/observation/latLong/current/?format=application/json&latitude=' + (String)location.latitude + '&longitude=' + (String)location.longitude + '&distance=25&API_KEY=' + (String)apiKey,
 	   timeout: 20 ]
-	//if (debugOutput) log.debug "params:${params}"
 	asynchttpGet('pollHandler', params)
 }
 
 
 void pollHandler(resp, data) {
 	if (resp.getStatus() == 200 || resp.getStatus() == 207) {
-		//if (debugOutput) log.debug "R: $resp.data"
 		aqi = parseJson(resp.data)
 
 		def isBasis = aqiBasis[basedOn as Integer]
@@ -90,8 +89,14 @@ void pollHandler(resp, data) {
 
 				if (isBasis == obs.ParameterName) {
 					descriptionText = "${device.displayName} airQualityIndex is ${obs.AQI}"
-					if (txtEnable) log.info "${descriptionText}"
+					if (txtEnable) log.info "AQI Values updated. Enable Debug to monitor changes realtime."
+					if (debugOutput) log.debug "${descriptionText}"
 					sendEvent(name: "airQualityIndex", value: obs.AQI, descriptionText: descriptionText)
+
+					descriptionText = "${device.displayName} airQualityCategory is ${aqiCategory[obs.Category.Number]}"
+					if (debugOutput) log.debug "${descriptionText}"
+					sendEvent(name: "airQualityCategory", value: aqiCategory[obs.Category.Number], descriptionText: descriptionText)
+
 					descriptionText = "${device.displayName} airQualityColor is ${aqiColor[obs.Category.Number]}"
 					if (debugOutput) log.info "${descriptionText}"
 					sendEvent(name: "airQualityColor", value: aqiColor[obs.Category.Number], descriptionText: descriptionText)
@@ -100,10 +105,11 @@ void pollHandler(resp, data) {
 		}
 		if (isBasis == "maxAQI") {
 			descriptionText = "${device.displayName} airQualityIndex is $maxAQI"
-			if (txtEnable) log.info "${descriptionText}"
+			if (txtEnable) log.info "AQI Values updated. Enable Debug to monitor changes realtime."
+			if (debugOutput) log.debug "${descriptionText}"
 			sendEvent(name: "airQualityIndex", value: maxAQI, descriptionText: descriptionText)
 			descriptionText = "${device.displayName} airQualityColor is ${aqiColor[maxAQICat]}"
-			if (debugOutput) log.info "${descriptionText}"
+			if (debugOutput) log.debug "${descriptionText}"
 			sendEvent(name: "airQualityColor", value: aqiColor[maxAQICat], descriptionText: descriptionText)
 
 		}
@@ -113,7 +119,6 @@ void pollHandler(resp, data) {
 
 void updated() {
 	unschedule()
-	//               "Seconds" "Minutes" "Hours" "Day Of Month" "Month" "Day Of Week" "Year"
 	if (apiKey) schedule("3 7 0/${pollEvery} ? * * *", pollAirNow)
 	if (debugOutput) runIn(1800,logsOff)
 }
@@ -130,5 +135,6 @@ def logsOff(){
 }
 
 
-@Field static aqiColor = [1: "Green - Good", 2: "Yellow - Moderate", 3: "Orange - Unhealthy for Sensitive Groups", 4: "Red - Unhealthy", 5: "Purple - Very Unhealthy", 6: "Maroon - Hazardous"]
+@Field static aqiColor = [1: "Green", 2: "Yellow", 3: "Orange", 4: "Red", 5: "Purple", 6: "Maroon"]
+@Field static aqiCategory = [1: "Good", 2: "Moderate", 3: "Unhealthy for Sensitive Groups", 4: "Unhealthy", 5: "Very Unhealthy", 6: "Hazardous"]
 @Field static aqiBasis = [1: "O3", 2: "PM2.5", 3: "PM10", 4: "maxAQI"]

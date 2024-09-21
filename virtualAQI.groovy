@@ -29,7 +29,7 @@ metadata
  		capability "AirQuality"
  		capability "Sensor"
  		
- 		command "setAQI", [[name:"number", type:"NUMBER", description:"AQI Level", constraints:["NUMBER"]]]
+ 		command "setAQI", [[name:"number", type:"NUMBER", description:"AQI Level"]]
 	}
 
       preferences 

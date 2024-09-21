@@ -1,5 +1,5 @@
 /*
- * Import URL: https://raw.githubusercontent.com/HubitatCommunity/??/master/??-Driver.groovy"
+ * Import URL: "https://raw.githubusercontent.com/HubitatCommunity/AirQuality-AirNow/refs/heads/main/virtualAQI.groovy"
  *
  *	Copyright 2019 C Steele
  *
@@ -24,12 +24,12 @@ import groovy.transform.Field
 
 metadata 
 {
-	definition(name: "Virtual AQI", namespace: "csteele", author: "C Steele", importUrl: "https://raw.githubusercontent.com/HubitatCommunity/??/master/??.groovy")
+	definition(name: "Virtual AQI", namespace: "csteele", author: "C Steele", importUrl: "https://raw.githubusercontent.com/HubitatCommunity/AirQuality-AirNow/refs/heads/main/virtualAQI.groovy")
 	{
  		capability "AirQuality"
  		capability "Sensor"
  		
- 		command "setAQI", ["number"]
+ 		command "setAQI", [[name:"number", type:"NUMBER", description:"AQI Level", constraints:["NUMBER"]]]
 	}
 
       preferences 

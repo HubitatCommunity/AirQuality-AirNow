@@ -69,7 +69,7 @@ void pollAirNow() {
 
 
 void pollHandler(resp, data) {
-    log.debug parseJson(resp.data)
+    ///log.debug parseJson(resp.data)
 	if (resp.getStatus() == 200 || resp.getStatus() == 207) {
 		aqi = parseJson(resp.data)
 

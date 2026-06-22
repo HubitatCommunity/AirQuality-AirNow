@@ -17,6 +17,7 @@
  *
  *
  *
+ *  thebearmay -  v1.0.5 17Jun2026 API changes
  *  JAS -  v1.0.4  Cleaned up some logging items 11/10/23
  *  JAS -  v1.0.3  split out category and color 08/08/23
  *         v1.0.2  PR from cmbruns
@@ -26,7 +27,7 @@
  * csteele v1.0.0  created.
  */ 
 
-static String version()	{  return '1.0.4'  }
+static String version()	{  return '1.0.5'  }
 
 import groovy.transform.Field
 
@@ -60,13 +61,15 @@ void pollAirNow() {
 		return
 	}
 	Map params = [ 
-	   uri: 'https://www.airnowapi.org/aq/observation/latLong/current/?format=application/json&latitude=' + (String)location.latitude + '&longitude=' + (String)location.longitude + '&distance=25&API_KEY=' + (String)apiKey,
+        uri: 'https://www.airnowapi.org/aq/observation/current/ziplatlong/?format=application/json&latitude=' + (String)location.latitude + '&longitude=' + (String)location.longitude + '&distance=25&API_KEY=' + (String)apiKey,
+	   //uri: 'https://www.airnowapi.org/aq/observation/latLong/current/?format=application/json&latitude=' + (String)location.latitude + '&longitude=' + (String)location.longitude + '&distance=25&API_KEY=' + (String)apiKey,
 	   timeout: 20 ]
 	asynchttpGet('pollHandler', params)
 }
 
 
 void pollHandler(resp, data) {
+    log.debug parseJson(resp.data)
 	if (resp.getStatus() == 200 || resp.getStatus() == 207) {
 		aqi = parseJson(resp.data)
 
@@ -75,31 +78,36 @@ void pollHandler(resp, data) {
 		def maxAQICat = -1
 
 		aqi.each { obs ->
-			if ((obs.AQI >= 0) && (obs.AQI <= 2000)) { // sanity check the value - AirNow api glitch removal
-				if (obs.AQI > maxAQI) {
-					maxAQI = obs.AQI
-					maxAQICat = obs.Category.Number
+			int aqiCategoryInx = -1
+            aqiCategory.each{
+            	if(it.value == obs.aqiCategoryName)
+                	aqiCategoryInx = it.key
+            }
+			if ((obs.nowcastAQI >= 0) && (obs.nowcastAQI <= 2000)) { // sanity check the value - AirNow api glitch removal
+				if (obs.nowcastAQI > maxAQI) {
+					maxAQI = obs.nowcastAQI
+					maxAQICat = aqiCategoryInx
 				}
 
 				def descriptionText = "${device.displayName} ${obs.ParameterName} is ${obs.AQI}"
-				def attrNam = obs.ParameterName.replace('.', '_')
+				def attrNam = obs.parameterName.replace('.', '_')
 
 				if (debugOutput) log.info "${descriptionText}"
-				sendEvent(name: attrNam, value: obs.AQI, descriptionText: descriptionText)
+				sendEvent(name: attrNam, value: obs.nowcastAQI, descriptionText: descriptionText)
 
 				if (isBasis == obs.ParameterName) {
-					descriptionText = "${device.displayName} airQualityIndex is ${obs.AQI}"
+					descriptionText = "${device.displayName} airQualityIndex is ${obs.nowcastAQI}"
 					if (txtEnable) log.info "AQI Values updated. Enable Debug to monitor changes realtime."
 					if (debugOutput) log.debug "${descriptionText}"
-					sendEvent(name: "airQualityIndex", value: obs.AQI, descriptionText: descriptionText)
+					sendEvent(name: "airQualityIndex", value: obs.nowcastAQI, descriptionText: descriptionText)
 
-					descriptionText = "${device.displayName} airQualityCategory is ${aqiCategory[obs.Category.Number]}"
+					descriptionText = "${device.displayName} airQualityCategory is ${obs.aqiCategoryName}"
 					if (debugOutput) log.debug "${descriptionText}"
-					sendEvent(name: "airQualityCategory", value: aqiCategory[obs.Category.Number], descriptionText: descriptionText)
-
-					descriptionText = "${device.displayName} airQualityColor is ${aqiColor[obs.Category.Number]}"
+					sendEvent(name: "airQualityCategory", value: obs.aqiCategoryName, descriptionText: descriptionText)
+                    
+					descriptionText = "${device.displayName} airQualityColor is ${obs.aqiCategoryName}"
 					if (debugOutput) log.info "${descriptionText}"
-					sendEvent(name: "airQualityColor", value: aqiColor[obs.Category.Number], descriptionText: descriptionText)
+					sendEvent(name: "airQualityColor", value: aqiColor[aqiCategoryInx], descriptionText: descriptionText)
 				}
 			}
 		}

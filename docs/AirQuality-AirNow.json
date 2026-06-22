@@ -1,10 +1,10 @@
 {
   "packageName": "Air Quality from AirNow",
   "author": "cSteele",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "minimumHEVersion": "2.0.0",
   "dateReleased": "2022-08-01",
-  "releaseNotes": "v1.0.2  PR from cmbruns\nv1.0.1  renamed 'PM2.5' attribute to not use a dot (.)\nv1.0.0  created.",
+  "releaseNotes": "v1.0.5   API changes\nv1.0.4   Cleaned up some logging items 11/10/23\nv1.0.3   split out category and color 08/08/23",
   "documentationLink": "https://github.com/HubitatCommunity/AirQuality-AirNow/blob/main/README.md",
   "drivers": [
     {

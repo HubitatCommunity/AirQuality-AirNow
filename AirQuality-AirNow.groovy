@@ -89,7 +89,7 @@ void pollHandler(resp, data) {
 					maxAQICat = aqiCategoryInx
 				}
 
-				def descriptionText = "${device.displayName} ${obs.ParameterName} is ${obs.AQI}"
+				def descriptionText = "${device.displayName} ${obs.parameterName} is ${obs.nowcastAQI}"
 				def attrNam = obs.parameterName.replace('.', '_')
 
 				if (debugOutput) log.info "${descriptionText}"
